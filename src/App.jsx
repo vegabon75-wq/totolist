@@ -14,6 +14,7 @@ function App() {
   });
 
   const [inputValue, setInputValue] = useState('');
+  const [inputTime, setInputTime] = useState('09:00'); // 기본 시간 설정
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -28,6 +29,7 @@ function App() {
     const newTodo = {
       id: Date.now(),
       text: inputValue,
+      time: inputTime, // 시간 추가
       completed: false,
       date: selectedDate
     };
@@ -63,7 +65,10 @@ function App() {
   const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
   const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
 
-  const filteredTodos = todos.filter(todo => todo.date === selectedDate);
+  // 할 일을 시간순으로 정렬
+  const filteredTodos = todos
+    .filter(todo => todo.date === selectedDate)
+    .sort((a, b) => (a.time || '00:00').localeCompare(b.time || '00:00'));
 
   const formatMonth = (date) => {
     return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
@@ -118,13 +123,21 @@ function App() {
           </header>
 
           <form onSubmit={addTodo} className="input-group">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="할 일을 입력하세요..."
-              className="todo-input"
-            />
+            <div className="input-row">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="할 일을 입력하세요..."
+                className="todo-input"
+              />
+              <input
+                type="time"
+                value={inputTime}
+                onChange={(e) => setInputTime(e.target.value)}
+                className="time-input"
+              />
+            </div>
             <button type="submit" className="add-button">추가</button>
           </form>
 
@@ -136,7 +149,10 @@ function App() {
                 <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
                   <div className="todo-content" onClick={() => toggleTodo(todo.id)}>
                     <span className="checkbox"></span>
-                    <span className="todo-text">{todo.text}</span>
+                    <div className="todo-info">
+                      <span className="todo-time">{todo.time || '시간 미지정'}</span>
+                      <span className="todo-text">{todo.text}</span>
+                    </div>
                   </div>
                   <button className="delete-button" onClick={() => deleteTodo(todo.id)} aria-label="삭제">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
