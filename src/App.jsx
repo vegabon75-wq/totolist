@@ -14,7 +14,7 @@ function App() {
   });
 
   const [inputValue, setInputValue] = useState('');
-  const [inputTime, setInputTime] = useState('09:00'); // 기본 시간 설정
+  const [inputTime, setInputTime] = useState('09:00:00'); // 기본 시간 설정 (초 포함)
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -133,6 +133,7 @@ function App() {
               />
               <input
                 type="time"
+                step="1"
                 value={inputTime}
                 onChange={(e) => setInputTime(e.target.value)}
                 className="time-input"
